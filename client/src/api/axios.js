@@ -1,16 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'http://localhost:5000/api', // This matches your backend port
-});
-
-// This automatically attaches your JWT token to every request
-API.interceptors.request.use((req) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        req.headers.Authorization = token;
-    }
-    return req;
+    baseURL: 'https://lms-portal-z271.onrender.com/api' 
 });
 
 export default API;
