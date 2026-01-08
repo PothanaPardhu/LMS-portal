@@ -11,7 +11,10 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Allows the server to understand JSON data
-app.use(cors());         // Allows the frontend to connect to the backend
+// server.js
+app.use(cors({
+    origin: 'https://lms-portal-gules.vercel.app/' 
+}));        // Allows the frontend to connect to the backend
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/admin', adminRoutes);
