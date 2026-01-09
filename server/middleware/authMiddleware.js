@@ -1,24 +1,20 @@
 const jwt = require('jsonwebtoken');
 
 const protect = (req, res, next) => {
-    // 1. Get the full header
     const authHeader = req.header('Authorization'); 
     
-    // 2. Check if header exists and starts with 'Bearer '
+    // CHANGE: Check for Bearer prefix and extract the actual token
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: "No token, authorization denied" });
     }
 
-    // 3. Extract only the token part (remove 'Bearer ')
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1]; // Extract token after "Bearer "
 
     try {
-        // 4. Verify using your Render environment variable
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
     } catch (err) {
-        // This triggers if the secret is wrong or token is expired
         res.status(401).json({ message: "Token is not valid" });
     }
 };
