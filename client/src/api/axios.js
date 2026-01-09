@@ -1,15 +1,21 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'https://lms-portal-z271.onrender.com/api'
+    baseURL: 'https://lms-portal-z271.onrender.com/api',
+    withCredentials: true // Fixed: changed 'True' to 'true' and added 'with'
 });
 
-// Add this interceptor to attach the token to every request
 API.interceptors.request.use((req) => {
-    const profile = localStorage.getItem('profile'); // Or whatever key you use to store user data
-    if (profile) {
-        const token = JSON.parse(profile).token;
-        req.headers.Authorization = `Bearer ${token}`;
+    // Check if your Login.js uses 'user' or 'profile'
+    const storedData = localStorage.getItem('user'); 
+    if (storedData) {
+        try {
+            const token = JSON.parse(storedData).token;
+            // This MUST match the Bearer split in your middleware
+            req.headers.Authorization = `Bearer ${token}`; 
+        } catch (error) {
+            console.error("Error parsing token from localStorage", error);
+        }
     }
     return req;
 });
