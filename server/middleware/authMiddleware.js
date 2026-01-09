@@ -1,15 +1,16 @@
 const jwt = require('jsonwebtoken');
 
 const protect = (req, res, next) => {
+    // Get the header
     const authHeader = req.header('Authorization'); 
     
-    // Check if header exists and starts with Bearer
+    // Check if it starts with 'Bearer '
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: "No token, authorization denied" });
     }
 
-    // This SPLIT is the most important part
-    const token = authHeader.split(' ')[1]; 
+    // Split and take ONLY the second part (the token)
+    const token = authHeader.split(' ')[1];
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
