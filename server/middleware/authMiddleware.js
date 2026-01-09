@@ -1,23 +1,28 @@
 const jwt = require('jsonwebtoken');
 
 const protect = (req, res, next) => {
-    // This line looks for the header we just added in Thunder Client
-    const token = req.header('Authorization'); 
+    // 1. Get the full header
+    const authHeader = req.header('Authorization'); 
     
-    if (!token) {
+    // 2. Check if header exists and starts with 'Bearer '
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: "No token, authorization denied" });
     }
 
+    // 3. Extract only the token part (remove 'Bearer ')
+    const token = authHeader.split(' ')[1];
+
     try {
+        // 4. Verify using your Render environment variable
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
     } catch (err) {
+        // This triggers if the secret is wrong or token is expired
         res.status(401).json({ message: "Token is not valid" });
     }
 };
 
-// Add this below your 'protect' function
 const adminOnly = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
         next();
