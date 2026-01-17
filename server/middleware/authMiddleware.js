@@ -1,14 +1,17 @@
 const jwt = require('jsonwebtoken');
 
 const protect = (req, res, next) => {
-    // This line looks for the header we just added in Thunder Client
-    const token = req.header('Authorization'); 
+    // Get token from Authorization header
+    const authHeader = req.header('Authorization');
     
-    if (!token) {
+    if (!authHeader) {
         return res.status(401).json({ message: "No token, authorization denied" });
     }
 
     try {
+        // Extract token from "Bearer <token>" format
+        const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+        
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();

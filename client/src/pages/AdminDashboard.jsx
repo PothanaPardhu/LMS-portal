@@ -30,14 +30,14 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div className="flex bg-gray-100 min-h-screen">
+        <div className="flex flex-col md:flex-row bg-gray-100 min-h-screen">
             <Sidebar />
-            <main className="flex-1 p-8">
-                <h2 className="text-3xl font-bold text-gray-800 mb-8">Platform Overview</h2>
+            <main className="flex-1 p-4 sm:p-6 md:p-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">Platform Overview</h2>
                 
                 {/* Stats Cards */}
                 {stats ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
                         <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
                             <p className="text-gray-500 font-semibold uppercase text-sm">Total Users</p>
                             <p className="text-4xl font-bold">{stats.totalUsers}</p>
@@ -55,40 +55,42 @@ const AdminDashboard = () => {
 
                 {/* User Management Table */}
                 <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div className="p-6 border-b bg-gray-50"><h3 className="font-bold">User Management</h3></div>
-                    <table className="w-full text-left">
-                        <thead className="text-xs uppercase bg-gray-100 text-gray-500">
-                            <tr>
-                                <th className="p-4">Name</th>
-                                <th className="p-4">Role</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map(u => (
-                                <tr key={u._id} className="border-t">
-                                    <td className="p-4 font-medium">{u.name}</td>
-                                    <td className="p-4 uppercase text-xs font-bold">{u.role}</td>
-                                    <td className="p-4">
-                                        {u.role === 'instructor' && !u.isApproved ? (
-                                            <span className="text-amber-600 font-bold">Pending</span>
-                                        ) : <span className="text-green-600">Active</span>}
-                                    </td>
-                                    <td className="p-4">
-                                        {u.role === 'instructor' && !u.isApproved && (
-                                            <button 
-                                                onClick={() => handleApprove(u._id)}
-                                                className="bg-indigo-600 text-white px-3 py-1 rounded text-xs"
-                                            >
-                                                Approve
-                                            </button>
-                                        )}
-                                    </td>
+                    <div className="p-4 sm:p-6 border-b bg-gray-50"><h3 className="font-bold text-lg">User Management</h3></div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead className="text-xs uppercase bg-gray-100 text-gray-500">
+                                <tr>
+                                    <th className="p-3 sm:p-4">Name</th>
+                                    <th className="p-3 sm:p-4">Role</th>
+                                    <th className="p-3 sm:p-4">Status</th>
+                                    <th className="p-3 sm:p-4">Action</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {users.map(u => (
+                                    <tr key={u._id} className="border-t">
+                                        <td className="p-3 sm:p-4 font-medium text-xs sm:text-sm">{u.name}</td>
+                                        <td className="p-3 sm:p-4 uppercase text-xs font-bold">{u.role}</td>
+                                        <td className="p-3 sm:p-4">
+                                            {u.role === 'instructor' && !u.isApproved ? (
+                                                <span className="text-amber-600 font-bold text-xs">Pending</span>
+                                            ) : <span className="text-green-600 text-xs">Active</span>}
+                                        </td>
+                                        <td className="p-3 sm:p-4">
+                                            {u.role === 'instructor' && !u.isApproved && (
+                                                <button 
+                                                    onClick={() => handleApprove(u._id)}
+                                                    className="bg-indigo-600 text-white px-2 sm:px-3 py-1 rounded text-xs"
+                                                >
+                                                    Approve
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </main>
         </div>

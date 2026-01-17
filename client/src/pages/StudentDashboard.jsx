@@ -26,20 +26,20 @@ const StudentDashboard = () => {
     }, []);
 
     return (
-        <div className="flex bg-slate-50 min-h-screen">
+        <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen">
             <StudentSidebar />
-            <main className="flex-1 p-8">
-                <header className="mb-10 flex justify-between items-center">
+            <main className="flex-1 p-4 sm:p-6 md:p-8">
+                <header className="mb-8 sm:mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h2 className="text-3xl font-black text-slate-800">Welcome, {user?.name}!</h2>
-                        <p className="text-slate-500">Find a course and start your learning journey today.</p>
+                        <h2 className="text-2xl sm:text-3xl font-black text-slate-800">Welcome, {user?.name}!</h2>
+                        <p className="text-sm sm:text-base text-slate-500">Find a course and start your learning journey today.</p>
                     </div>
-                    <div className="relative">
+                    <div className="relative w-full sm:w-64">
                         <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
                         <input 
                             type="text" 
                             placeholder="Search courses..." 
-                            className="pl-10 pr-4 py-2 rounded-full border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none w-64 shadow-sm"
+                            className="pl-10 pr-4 py-2 rounded-full border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none w-full shadow-sm"
                         />
                     </div>
                 </header>
@@ -47,7 +47,7 @@ const StudentDashboard = () => {
                 {loading ? (
                     <div className="text-center py-20 text-slate-400">Loading catalog...</div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                         {courses.map(course => (
                             <div key={course._id} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
                                 <div className="h-40 bg-indigo-600 flex items-center justify-center relative">

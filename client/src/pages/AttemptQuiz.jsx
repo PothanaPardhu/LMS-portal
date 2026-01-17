@@ -31,15 +31,15 @@ const AttemptQuiz = () => {
 
     if (result) {
         return (
-            <div className="flex bg-slate-50 min-h-screen">
+            <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen">
                 <StudentSidebar />
-                <main className="flex-1 p-8 flex flex-col items-center justify-center">
-                    <div className="bg-white p-10 rounded-3xl shadow-xl text-center max-w-md w-full border border-slate-100">
+                <main className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center">
+                    <div className="bg-white p-6 sm:p-10 rounded-3xl shadow-xl text-center max-w-md w-full border border-slate-100">
                         <CheckCircle className="mx-auto text-emerald-500 mb-4" size={64} />
-                        <h2 className="text-3xl font-bold text-slate-800">Quiz Result</h2>
-                        <div className="text-6xl font-black text-indigo-600 my-6">{result.percentage}%</div>
-                        <p className="text-slate-500 mb-8">You got {result.score} out of {result.total} correct!</p>
-                        <button onClick={() => navigate('/student-dashboard')} className="w-full bg-slate-800 text-white py-3 rounded-xl font-bold">Return to Dashboard</button>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Quiz Result</h2>
+                        <div className="text-5xl sm:text-6xl font-black text-indigo-600 my-6">{result.percentage}%</div>
+                        <p className="text-slate-500 mb-8 text-sm sm:text-base">You got {result.score} out of {result.total} correct!</p>
+                        <button onClick={() => navigate('/student-dashboard')} className="w-full bg-slate-800 text-white py-3 rounded-xl font-bold text-sm sm:text-base">Return to Dashboard</button>
                     </div>
                 </main>
             </div>
@@ -47,19 +47,19 @@ const AttemptQuiz = () => {
     }
 
     return (
-        <div className="flex bg-slate-50 min-h-screen">
+        <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen">
             <StudentSidebar />
-            <main className="flex-1 p-8">
-                <h2 className="text-3xl font-bold text-slate-800 mb-10 flex items-center gap-3">
+            <main className="flex-1 p-4 sm:p-6 md:p-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-8 sm:mb-10 flex items-center gap-3">
                     <HelpCircle className="text-indigo-600" /> Course Assessment
                 </h2>
-                <div className="max-w-3xl space-y-6">
+                <div className="max-w-3xl space-y-4 sm:space-y-6">
                     {questions.map((q, qIdx) => (
-                        <div key={qIdx} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                            <h3 className="text-lg font-bold text-slate-800 mb-4">{qIdx + 1}. {q.question}</h3>
-                            <div className="grid gap-3">
+                        <div key={qIdx} className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
+                            <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-4">{qIdx + 1}. {q.question}</h3>
+                            <div className="grid gap-2 sm:gap-3">
                                 {q.options.map((opt, oIdx) => (
-                                    <label key={oIdx} className={`p-4 border rounded-xl cursor-pointer transition ${answers[qIdx] === oIdx ? 'border-indigo-600 bg-indigo-50' : 'border-slate-100 hover:bg-slate-50'}`}>
+                                    <label key={oIdx} className={`p-3 sm:p-4 border rounded-xl cursor-pointer transition text-sm sm:text-base ${answers[qIdx] === oIdx ? 'border-indigo-600 bg-indigo-50' : 'border-slate-100 hover:bg-slate-50'}`}>
                                         <input type="radio" name={`q${qIdx}`} className="mr-3" onChange={() => setAnswers({...answers, [qIdx]: oIdx})} />
                                         {opt}
                                     </label>

@@ -33,9 +33,9 @@ const handleSubmit = async (e) => {
 };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-            <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8">
-                <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">LMS Portal Login</h2>
+        <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4 py-8">
+            <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-6 sm:p-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-8">LMS Portal Login</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Email Address</label>

@@ -38,6 +38,11 @@ exports.enrollInCourse = async (req, res) => {
         const courseId = req.params.id;
         const userId = req.user.id; // From JWT
 
+        // Validate courseId format
+        if (!courseId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ message: "Invalid course ID format" });
+        }
+
         const course = await Course.findById(courseId);
         if (!course) return res.status(404).json({ message: "Course not found" });
 
@@ -52,12 +57,26 @@ exports.enrollInCourse = async (req, res) => {
 
         // Add course to student's profile
         const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Initialize enrolledCourses if it doesn't exist
+        if (!user.enrolledCourses) {
+            user.enrolledCourses = [];
+        }
+
         user.enrolledCourses.push(courseId);
         await user.save();
 
-        res.json({ message: "Enrolled successfully" });
+        res.status(200).json({ 
+            message: "Enrolled successfully",
+            course: course.title,
+            enrolledCoursesCount: user.enrolledCourses.length
+        });
     } catch (err) {
-        res.status(500).json({ message: "Server error", error: err.message });
+        console.error('Enrollment error:', err);
+        res.status(500).json({ message: "Server error during enrollment", error: err.message });
     }
 };
 
@@ -134,31 +153,109 @@ exports.addQuiz = async (req, res) => {
     }
 };
 
-// Student submits assignment
+// Student submits assignment (handles multipart file upload)
 exports.submitAssignment = async (req, res) => {
-    const { courseId, assignmentId, fileUrl } = req.body;
-    const course = await Course.findById(courseId);
-    
-    const assignment = course.assignments.id(assignmentId);
-    assignment.submissions.push({ student: req.user.id, fileUrl });
-    
-    await course.save();
-    res.json({ message: "Assignment submitted!" });
+    try {
+        const courseId = req.params.id;
+        const { assignmentId } = req.body;
+
+        if (!req.file) {
+            return res.status(400).json({ message: "No file was uploaded" });
+        }
+
+        const course = await Course.findById(courseId);
+        if (!course) return res.status(404).json({ message: "Course not found" });
+
+        const assignment = course.assignments.id(assignmentId);
+        if (!assignment) return res.status(404).json({ message: "Assignment not found" });
+
+        // Construct file URL
+        const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+
+        assignment.submissions.push({ 
+            student: req.user.id, 
+            fileUrl, 
+            status: 'Submitted',
+            submittedAt: new Date()
+        });
+        
+        await course.save();
+        res.status(200).json({ 
+            message: "Assignment submitted successfully!", 
+            fileUrl: fileUrl 
+        });
+    } catch (err) {
+        console.error('Error in submitAssignment:', err);
+        res.status(500).json({ message: "Error submitting assignment", error: err.message });
+    }
 };
 
 // Instructor grades assignment
 exports.gradeAssignment = async (req, res) => {
-    const { courseId, assignmentId, submissionId, grade } = req.body;
-    const course = await Course.findById(courseId);
-    
-    const assignment = course.assignments.id(assignmentId);
-    const submission = assignment.submissions.id(submissionId);
-    
-    submission.grade = grade;
-    submission.status = 'Graded';
-    
-    await course.save();
-    res.json({ message: "Grade updated!" });
+    try {
+        const { courseId, assignmentId, submissionId, grade } = req.body;
+        
+        console.log('Grading assignment with:', { courseId, assignmentId, submissionId, grade, userId: req.user?.id });
+
+        // Validation
+        if (!courseId || !assignmentId || !submissionId) {
+            console.log('Missing required fields');
+            return res.status(400).json({ message: "Missing required fields: courseId, assignmentId, submissionId" });
+        }
+
+        if (grade === undefined || grade === null || grade === '') {
+            console.log('Missing grade');
+            return res.status(400).json({ message: "Grade is required and must be a valid number" });
+        }
+
+        const gradeNum = parseFloat(grade);
+        if (isNaN(gradeNum) || gradeNum < 0) {
+            console.log('Invalid grade value:', grade);
+            return res.status(400).json({ message: "Grade must be a valid positive number" });
+        }
+
+        const course = await Course.findById(courseId);
+        if (!course) {
+            console.log('Course not found:', courseId);
+            return res.status(404).json({ message: "Course not found" });
+        }
+
+        // Verify instructor ownership
+        if (course.instructor.toString() !== req.user.id) {
+            console.log('Access denied:', { instructorId: course.instructor.toString(), userId: req.user.id });
+            return res.status(403).json({ message: "Access denied: You are not the instructor of this course" });
+        }
+
+        const assignment = course.assignments.id(assignmentId);
+        if (!assignment) {
+            console.log('Assignment not found:', assignmentId);
+            return res.status(404).json({ message: "Assignment not found" });
+        }
+
+        const submission = assignment.submissions.id(submissionId);
+        if (!submission) {
+            console.log('Submission not found:', submissionId);
+            console.log('Available submissions:', assignment.submissions.map(s => s._id));
+            return res.status(404).json({ message: "Submission not found" });
+        }
+
+        submission.grade = gradeNum;
+        submission.status = 'Graded';
+        submission.gradedAt = new Date();
+
+        await course.save();
+        
+        console.log('Grade saved successfully:', { submissionId, grade: gradeNum });
+        
+        res.status(200).json({ 
+            message: "Grade updated successfully!",
+            grade: gradeNum,
+            submissionId: submissionId
+        });
+    } catch (err) {
+        console.error('Grading error:', err);
+        res.status(500).json({ message: "Error updating grade", error: err.message });
+    }
 };
 
 exports.completeLesson = async (req, res) => {
@@ -247,5 +344,88 @@ exports.getCourseById = async (req, res) => {
         res.json(course);
     } catch (err) {
         res.status(500).json({ message: "Server error" });
+    }
+};
+
+exports.unenrollFromCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const userId = req.user.id; // From JWT
+
+        // Validate courseId format
+        if (!courseId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ message: "Invalid course ID format" });
+        }
+
+        const course = await Course.findById(courseId);
+        if (!course) return res.status(404).json({ message: "Course not found" });
+
+        // Check if user is enrolled
+        if (!course.studentsEnrolled.includes(userId)) {
+            return res.status(400).json({ message: "You are not enrolled in this course" });
+        }
+
+        // Remove student from course
+        course.studentsEnrolled = course.studentsEnrolled.filter(id => id.toString() !== userId);
+        await course.save();
+
+        // Remove course from student's profile
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.enrolledCourses) {
+            user.enrolledCourses = user.enrolledCourses.filter(id => id.toString() !== courseId);
+        }
+        await user.save();
+
+        res.status(200).json({ 
+            message: "Unenrolled successfully",
+            course: course.title,
+            enrolledCoursesCount: user.enrolledCourses ? user.enrolledCourses.length : 0
+        });
+    } catch (err) {
+        console.error('Unenrollment error:', err);
+        res.status(500).json({ message: "Server error during unenrollment", error: err.message });
+    }
+};
+
+exports.deleteCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const userId = req.user.id; // From JWT
+
+        // Validate courseId format
+        if (!courseId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ message: "Invalid course ID format" });
+        }
+
+        const course = await Course.findById(courseId);
+        if (!course) return res.status(404).json({ message: "Course not found" });
+
+        // Check if user is the instructor of this course
+        if (course.instructor.toString() !== userId) {
+            return res.status(403).json({ message: "Only the course instructor can delete this course" });
+        }
+
+        // Remove course from all enrolled students' profiles
+        if (course.studentsEnrolled && course.studentsEnrolled.length > 0) {
+            await User.updateMany(
+                { _id: { $in: course.studentsEnrolled } },
+                { $pull: { enrolledCourses: courseId } }
+            );
+        }
+
+        // Delete the course
+        await Course.findByIdAndDelete(courseId);
+
+        res.status(200).json({ 
+            message: "Course deleted successfully",
+            courseId: courseId
+        });
+    } catch (err) {
+        console.error('Delete course error:', err);
+        res.status(500).json({ message: "Server error during course deletion", error: err.message });
     }
 };

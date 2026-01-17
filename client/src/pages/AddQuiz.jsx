@@ -24,27 +24,28 @@ const AddQuiz = () => {
     };
 
     return (
-        <div className="flex bg-gray-50 min-h-screen">
+        <div className="flex flex-col md:flex-row bg-gray-50 min-h-screen">
             <InstructorSidebar />
-            <main className="flex-1 p-8">
-                <h2 className="text-3xl font-bold mb-6">Create Quiz MCQ</h2>
-                <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-md space-y-4">
+            <main className="flex-1 p-4 sm:p-6 md:p-8">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-6">Create Quiz MCQ</h2>
+                <form onSubmit={handleSubmit} className="bg-white p-6 sm:p-8 rounded-xl shadow-md space-y-4 max-w-2xl">
                     <input 
-                        className="w-full p-3 border rounded" 
+                        className="w-full p-3 border rounded text-sm" 
                         placeholder="Question" 
                         value={quizData.question}
                         onChange={(e) => setQuizData({...quizData, question: e.target.value})}
                     />
                     {quizData.options.map((opt, i) => (
-                        <div key={i} className="flex gap-2">
+                        <div key={i} className="flex gap-2 flex-col sm:flex-row">
                             <input 
                                 type="radio" 
                                 name="correct" 
                                 checked={quizData.correctAnswerIndex === i}
                                 onChange={() => setQuizData({...quizData, correctAnswerIndex: i})}
+                                className="mt-2 sm:mt-0"
                             />
                             <input 
-                                className="flex-1 p-2 border rounded" 
+                                className="flex-1 p-2 border rounded text-sm" 
                                 placeholder={`Option ${i+1}`}
                                 value={opt}
                                 onChange={(e) => {

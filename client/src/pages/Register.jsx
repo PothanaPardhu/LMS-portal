@@ -18,9 +18,9 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-            <div className="max-w-md w-full bg-white rounded-xl shadow-2xl p-8 border border-gray-100">
-                <h2 className="text-3xl font-extrabold text-center text-gray-900 mb-2">Create Account</h2>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
+            <div className="max-w-md w-full bg-white rounded-xl shadow-2xl p-6 sm:p-8 border border-gray-100">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-gray-900 mb-2">Create Account</h2>
                 <p className="text-center text-gray-500 mb-8">Join the LMS community today</p>
                 
                 <form onSubmit={handleSubmit} className="space-y-5">

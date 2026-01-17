@@ -28,11 +28,11 @@ const handleSubmit = async (e) => {
 };
 
     return (
-        <div className="flex bg-gray-50 min-h-screen">
+        <div className="flex flex-col md:flex-row bg-gray-50 min-h-screen">
             <InstructorSidebar />
-            <main className="flex-1 p-8">
-                <h2 className="text-3xl font-bold text-gray-800 mb-8">Create Lesson Content</h2>
-                <form onSubmit={handleSubmit} className="max-w-xl bg-white p-8 rounded-xl shadow-md space-y-5">
+            <main className="flex-1 p-4 sm:p-6 md:p-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">Create Lesson Content</h2>
+                <form onSubmit={handleSubmit} className="max-w-xl bg-white p-6 sm:p-8 rounded-xl shadow-md space-y-5">
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Lesson Title</label>
                         <input type="text" required className="w-full p-3 border rounded-lg"
