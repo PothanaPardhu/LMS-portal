@@ -23,8 +23,12 @@ function App() {
     <Router>
       <Routes>
       <Route path="/" element={<Wecome />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      
+      {/* Role-based login routes */}
+      <Route path="/login/:role" element={<Login />} />
+      
+      {/* Role-based registration routes */}
+      <Route path="/register/:role" element={<Register />} />
         
         {/* Placeholder routes for now */}
         <Route path="/instructor/create-course" element={<CreateCourse />} />

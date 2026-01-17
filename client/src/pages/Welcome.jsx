@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, Users, ShieldCheck } from 'lucide-react';
+import { BookOpen, Users, GraduationCap, Shield } from 'lucide-react';
 
 const Welcome = () => {
     return (
@@ -14,7 +14,7 @@ const Welcome = () => {
         >
             
             {/* Content wrapper */}
-            <div className="relative z-10 max-w-4xl text-center w-full">
+            <div className="relative z-10 max-w-5xl text-center w-full">
                 <div className="flex justify-center mb-6">
                     <div className="p-3 sm:p-4 bg-indigo-600 rounded-2xl shadow-xl">
                         <BookOpen size={40} className="text-white sm:w-12 sm:h-12" />
@@ -27,17 +27,26 @@ const Welcome = () => {
                     A unified learning ecosystem for students to grow, instructors to inspire, and admins to manage.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-12">
-                    <Link to="/login" className="flex flex-col items-center p-6 sm:p-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition group border border-slate-100 hover:scale-105">
-                        <Users className="text-indigo-600 mb-4 group-hover:scale-110 transition" size={32} />
-                        <span className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">Existing User</span>
-                        <span className="text-sm sm:text-base text-slate-500">Login to your dashboard</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-12">
+                    {/* Student Login */}
+                    <Link to="/login/student" className="flex flex-col items-center p-6 sm:p-8 bg-blue-500 rounded-2xl shadow-md hover:shadow-xl transition group border border-blue-400 hover:scale-105">
+                        <GraduationCap className="text-white mb-4 group-hover:scale-110 transition" size={32} />
+                        <span className="text-xl sm:text-2xl font-bold text-white mb-2">Login as Student</span>
+                        <span className="text-sm sm:text-base text-blue-100">Access your courses</span>
                     </Link>
                     
-                    <Link to="/register" className="flex flex-col items-center p-6 sm:p-8 bg-indigo-600 rounded-2xl shadow-md hover:shadow-xl transition group hover:scale-105">
-                        <ShieldCheck className="text-white mb-4 group-hover:scale-110 transition" size={32} />
-                        <span className="text-xl sm:text-2xl font-bold text-white mb-2">New Member</span>
-                        <span className="text-sm sm:text-base text-indigo-100">Create your free account</span>
+                    {/* Instructor Login */}
+                    <Link to="/login/instructor" className="flex flex-col items-center p-6 sm:p-8 bg-green-500 rounded-2xl shadow-md hover:shadow-xl transition group border border-green-400 hover:scale-105">
+                        <Users className="text-white mb-4 group-hover:scale-110 transition" size={32} />
+                        <span className="text-xl sm:text-2xl font-bold text-white mb-2">Login as Instructor</span>
+                        <span className="text-sm sm:text-base text-green-100">Manage your courses</span>
+                    </Link>
+
+                    {/* Admin Login */}
+                    <Link to="/login/admin" className="flex flex-col items-center p-6 sm:p-8 bg-red-500 rounded-2xl shadow-md hover:shadow-xl transition group border border-red-400 hover:scale-105">
+                        <Shield className="text-white mb-4 group-hover:scale-110 transition" size={32} />
+                        <span className="text-xl sm:text-2xl font-bold text-white mb-2">Login as Admin</span>
+                        <span className="text-sm sm:text-base text-red-100">Manage the system</span>
                     </Link>
                 </div>
             </div>
